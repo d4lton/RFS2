@@ -14,6 +14,7 @@ public class AsteroidManager : MonoBehaviour {
 	void Start() {
 		rigidBody = GetComponent<Rigidbody2D>();
 		rigidBody.transform.position = new Vector3((float)Random.Range(-xStartOffset, xStartOffset), yStart, 0f);
+		// TODO: the x position of the asteroid should be used to temper the force, so asteroids don't go flying off-screen
 		rigidBody.AddForce(Vector2.right * (float)Random.Range(-xForce, xForce), ForceMode2D.Force);
 	}
 	
