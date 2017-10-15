@@ -7,6 +7,7 @@ public class GameManager : StateMachineBehavior {
 
 	public enum GameState {
 		ENDED = 0,
+		STARTING,
 		RUNNING,
 		PLAYER_DIED
 	};
@@ -21,28 +22,28 @@ public class GameManager : StateMachineBehavior {
 	public GameObject padPrefab;
 	public int asteroidSpawnRateMin = 2;
 	public int asteroifSpawnRateMax = 4;
-	public float yPad = -4.0f;
-	public float xPadOffset = -2.0f;
-	public int padCount = 3;
+
+	PadsManager padsManager;
 
 	public static GameManager instance;
-
-	private int padsLeft = 0;
 
 	void Awake() {
 		instance = this;
 	}
 
 	void Start() {
+		padsManager = PadsManager.instance;
 		setState((int)GameState.ENDED);
 	}
 
 	void OnEnable() {
-		PadManager.onPadDestroyed += onPadDestroyed;
+		PadsManager.onPadsCreated += onPadsCreated;
+		PadsManager.onPadsDestroyed += onPadsDestroyed;
 	}
 
 	void OnDisable() {
-		PadManager.onPadDestroyed -= onPadDestroyed;
+		PadsManager.onPadsCreated -= onPadsCreated;
+		PadsManager.onPadsDestroyed -= onPadsDestroyed;
 	}
 	
 	void Update() {
@@ -60,20 +61,18 @@ public class GameManager : StateMachineBehavior {
 		}
 	}
 
-	void onPlayerDied() {
+	void onPadsCreated() {
+		Debug.Log("onPadsCreated");
+		setState((int)GameState.RUNNING);
+	}
+
+	void onPadsDestroyed() {
+		Debug.Log("onPadsDestroyed");
 		setState((int)GameState.PLAYER_DIED);
 	}
 
-	void onPadDestroyed() {
-		Debug.Log("onPadDestroyed");
-		padsLeft--;
-		if (padsLeft <= 0) {
-			setState((int)GameState.PLAYER_DIED);
-		}
-	}
-
 	public void onPlayClicked() {
-		setState((int)GameState.RUNNING);
+		setState((int)GameState.STARTING);
 	}
 
 	public void onRestartClicked() {
@@ -87,9 +86,13 @@ public class GameManager : StateMachineBehavior {
 			startPage.SetActive(true);
 			gameOverPage.SetActive(false);
 			break;
+		case GameState.STARTING:
+			Debug.Log("STARTING");
+			setupGame();
+			break;
 		case GameState.RUNNING:
 			Debug.Log("RUNNING");
-			startGame();
+			runGame();
 			break;
 		case GameState.PLAYER_DIED:
 			Debug.Log("PLAYER_DIED");
@@ -99,40 +102,32 @@ public class GameManager : StateMachineBehavior {
 	}
 
 	private void endGame() {
-
 		// show the Game Over page
 		startPage.SetActive(false);
 		gameOverPage.SetActive(true);
-
+		// stop spawning those asteroids
 		StopCoroutine("spawnAsteroids");
-
 		// let everyone know the game has ended
 		if (onGameEnded != null) {
 			onGameEnded();
 		}
 	}
 
-	private void startGame() {
-
+	private void setupGame() {
 		// show the Start Game page
 		startPage.SetActive(false);
 		gameOverPage.SetActive(false);
-
-		padsLeft = padCount;
-
 		// spawn launchpads
-		for (int i = 0; i < padsLeft; i++) {
-			GameObject pad = Instantiate(padPrefab);
-			pad.transform.position = new Vector3(xPadOffset * (i - (padCount / 2)), yPad, 0);
-		}
+		padsManager.createPads();
+	}
 
+	private void runGame() {
+		// start spawning the asteroids
 		StartCoroutine("spawnAsteroids");
-
 		// let everyone know the game has started
 		if (onGameStarted != null) {
 			onGameStarted();
 		}
-
 	}
 
 }

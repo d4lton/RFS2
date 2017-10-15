@@ -5,11 +5,11 @@ using UnityEngine;
 public class PadManager : MonoBehaviour {
 
 	public delegate void PadManagerDelegate();
-	public static event PadManagerDelegate onPadDestroyed;
+	public event PadManagerDelegate onPadDestroyed;
 
 	void Start() {
 	}
-	
+
 	void Update() {
 	}
 
