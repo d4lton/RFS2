@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class PadManager : MonoBehaviour {
 
+	public delegate void PadManagerDelegate();
+	public static event PadManagerDelegate onPadDestroyed;
+
 	void Start() {
 	}
 	
@@ -11,6 +14,7 @@ public class PadManager : MonoBehaviour {
 	}
 
 	void OnTriggerEnter2D(Collider2D collider) {
+		onPadDestroyed();
 		Destroy(gameObject);
 	}
 

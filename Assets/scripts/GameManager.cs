@@ -26,12 +26,22 @@ public class GameManager : StateMachineBehavior {
 
 	public static GameManager instance;
 
+	private int padsLeft = 0;
+
 	void Awake() {
 		instance = this;
 	}
 
 	void Start() {
 		setState((int)GameState.RUNNING);
+	}
+
+	void OnEnable() {
+		PadManager.onPadDestroyed += onPadDestroyed;
+	}
+
+	void OnDisable() {
+		PadManager.onPadDestroyed -= onPadDestroyed;
 	}
 	
 	void Update() {
@@ -53,27 +63,46 @@ public class GameManager : StateMachineBehavior {
 		setState((int)GameState.PLAYER_DIED);
 	}
 
+	void onPadDestroyed() {
+		Debug.Log("onPadDestroyed");
+		padsLeft--;
+		if (padsLeft <= 0) {
+			setState((int)GameState.PLAYER_DIED);
+		}
+	}
+
 	protected override void onStateChange() {
 		switch ((GameState)state) {
 		case GameState.ENDED:
-			// show startPage
+			Debug.Log("ENDED");
+			startPage.SetActive(true);
+			gameOverPage.SetActive(false);
 			break;
 		case GameState.RUNNING:
+			Debug.Log("RUNNING");
+			startPage.SetActive(false);
+			gameOverPage.SetActive(false);
 			initializeGame();
 			break;
 		case GameState.PLAYER_DIED:
-			// show gameOverPage
+			Debug.Log("PLAYER_DIED");
+			startPage.SetActive(false);
+			gameOverPage.SetActive(true);
 			StopCoroutine("spawnAsteroids");
 			break;
 		}
 	}
 
 	private void initializeGame() {
+
 		// spawn launchpads
 		for (int i = 0; i < 3; i++) {
 			GameObject pad = Instantiate(padPrefab);
 			pad.transform.position = new Vector3(xPadOffset * (i - 1), yPad, 0);
 		}
+
+		padsLeft = 3;
+
 		// start asteroids
 		StartCoroutine("spawnAsteroids");
 	}
