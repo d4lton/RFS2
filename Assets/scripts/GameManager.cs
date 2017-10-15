@@ -89,25 +89,34 @@ public class GameManager : StateMachineBehavior {
 			break;
 		case GameState.RUNNING:
 			Debug.Log("RUNNING");
-			startPage.SetActive(false);
-			gameOverPage.SetActive(false);
 			startGame();
 			break;
 		case GameState.PLAYER_DIED:
 			Debug.Log("PLAYER_DIED");
 			endGame();
-			startPage.SetActive(false);
-			gameOverPage.SetActive(true);
 			break;
 		}
 	}
 
 	private void endGame() {
+
+		// show the Game Over page
+		startPage.SetActive(false);
+		gameOverPage.SetActive(true);
+
 		StopCoroutine("spawnAsteroids");
-		// remove any in-play asteroids and such
+
+		// let everyone know the game has ended
+		if (onGameEnded != null) {
+			onGameEnded();
+		}
 	}
 
 	private void startGame() {
+
+		// show the Start Game page
+		startPage.SetActive(false);
+		gameOverPage.SetActive(false);
 
 		padsLeft = padCount;
 
@@ -117,9 +126,13 @@ public class GameManager : StateMachineBehavior {
 			pad.transform.position = new Vector3(xPadOffset * (i - (padCount / 2)), yPad, 0);
 		}
 
-		// start asteroids
 		StartCoroutine("spawnAsteroids");
-	
+
+		// let everyone know the game has started
+		if (onGameStarted != null) {
+			onGameStarted();
+		}
+
 	}
 
 }

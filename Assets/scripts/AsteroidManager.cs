@@ -21,9 +21,22 @@ public class AsteroidManager : MonoBehaviour {
 	void Update() {
 	}
 
+	void OnEnable() {
+		GameManager.onGameEnded += onGameEnded;
+	}
+
+	void OnDisable() {
+		GameManager.onGameEnded -= onGameEnded;
+	}
+
+	void onGameEnded() {
+		Debug.Log("AsteroidManager noticed that the game ended, fascinating.");
+	}
+
 	void OnTriggerEnter2D(Collider2D collider) {
 		if (collider.gameObject.tag == "Ground") {
 			Destroy(gameObject);
 		}
 	}
+
 }

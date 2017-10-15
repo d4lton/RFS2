@@ -34,8 +34,6 @@ public class ScrollManager : MonoBehaviour {
 	float spawnTimer = 0;
 	PoolObject[] poolObjects;
 
-	GameManager gameManager;
-
 	void Awake() {
 		configure();
 	}

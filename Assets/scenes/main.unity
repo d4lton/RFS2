@@ -982,6 +982,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 972ad9a666e7f447a84283b351b67271, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  padPrefab: {fileID: 1001601454777100, guid: 36f80802578344067a63f13e8c3e61e9, type: 2}
+  padCount: 3
+  yPad: -4
+  xPadOffset: -2
 --- !u!4 &1461309710
 Transform:
   m_ObjectHideFlags: 0
