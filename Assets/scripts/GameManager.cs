@@ -23,6 +23,7 @@ public class GameManager : StateMachineBehavior {
 	public int asteroifSpawnRateMax = 4;
 	public float yPad = -4.0f;
 	public float xPadOffset = -2.0f;
+	public int padCount = 3;
 
 	public static GameManager instance;
 
@@ -33,7 +34,7 @@ public class GameManager : StateMachineBehavior {
 	}
 
 	void Start() {
-		setState((int)GameState.RUNNING);
+		setState((int)GameState.ENDED);
 	}
 
 	void OnEnable() {
@@ -54,7 +55,7 @@ public class GameManager : StateMachineBehavior {
 
 	IEnumerator spawnAsteroids() {
 		while (true) {
-			GameObject asteroid = Instantiate(asteroidPrefab);
+			Instantiate(asteroidPrefab);
 			yield return new WaitForSeconds(Random.Range(asteroidSpawnRateMin, asteroifSpawnRateMax));
 		}
 	}
@@ -71,6 +72,14 @@ public class GameManager : StateMachineBehavior {
 		}
 	}
 
+	public void onPlayClicked() {
+		setState((int)GameState.RUNNING);
+	}
+
+	public void onRestartClicked() {
+		setState((int)GameState.ENDED);
+	}
+
 	protected override void onStateChange() {
 		switch ((GameState)state) {
 		case GameState.ENDED:
@@ -82,29 +91,35 @@ public class GameManager : StateMachineBehavior {
 			Debug.Log("RUNNING");
 			startPage.SetActive(false);
 			gameOverPage.SetActive(false);
-			initializeGame();
+			startGame();
 			break;
 		case GameState.PLAYER_DIED:
 			Debug.Log("PLAYER_DIED");
+			endGame();
 			startPage.SetActive(false);
 			gameOverPage.SetActive(true);
-			StopCoroutine("spawnAsteroids");
 			break;
 		}
 	}
 
-	private void initializeGame() {
+	private void endGame() {
+		StopCoroutine("spawnAsteroids");
+		// remove any in-play asteroids and such
+	}
+
+	private void startGame() {
+
+		padsLeft = padCount;
 
 		// spawn launchpads
-		for (int i = 0; i < 3; i++) {
+		for (int i = 0; i < padsLeft; i++) {
 			GameObject pad = Instantiate(padPrefab);
-			pad.transform.position = new Vector3(xPadOffset * (i - 1), yPad, 0);
+			pad.transform.position = new Vector3(xPadOffset * (i - (padCount / 2)), yPad, 0);
 		}
-
-		padsLeft = 3;
 
 		// start asteroids
 		StartCoroutine("spawnAsteroids");
+	
 	}
 
 }
