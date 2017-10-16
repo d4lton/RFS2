@@ -21,7 +21,7 @@ public class GameManager : StateMachineBehavior {
 	public GameObject asteroidPrefab;
 	public GameObject padPrefab;
 	public int asteroidSpawnRateMin = 2;
-	public int asteroifSpawnRateMax = 4;
+	public int asteroidSpawnRateMax = 4;
 
 	PadsManager padsManager;
 
@@ -57,7 +57,7 @@ public class GameManager : StateMachineBehavior {
 	IEnumerator spawnAsteroids() {
 		while (true) {
 			Instantiate(asteroidPrefab);
-			yield return new WaitForSeconds(Random.Range(asteroidSpawnRateMin, asteroifSpawnRateMax));
+			yield return new WaitForSeconds(Random.Range(asteroidSpawnRateMin, asteroidSpawnRateMax));
 		}
 	}
 

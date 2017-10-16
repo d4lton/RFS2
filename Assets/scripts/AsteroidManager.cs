@@ -31,6 +31,7 @@ public class AsteroidManager : MonoBehaviour {
 
 	void onGameEnded() {
 		Debug.Log("AsteroidManager noticed that the game ended, fascinating.");
+		Destroy(gameObject);
 	}
 
 	void OnTriggerEnter2D(Collider2D collider) {
