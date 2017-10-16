@@ -2,14 +2,24 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Pad : MonoBehaviour {
+public class Pad : StateMachineBehavior {
+
+	public enum PadState {
+		IDLE = 0,
+		LOADING,
+		LOADED
+	};
 
 	public delegate void PadDelegate();
 	public event PadDelegate onPadDestroyed;
 
 	public GameObject rocketPrefab;
+	public float makeRocketDelay = 3.0f;
+
+	GameObject rocket;
 
 	void Start() {
+		setState((int)PadState.IDLE);
 	}
 
 	void Update() {
@@ -20,36 +30,59 @@ public class Pad : MonoBehaviour {
 			if (onPadDestroyed != null) {
 				onPadDestroyed();
 			}
+			if (rocket != null) { // there's a rocket on the pad, kill it too
+				rocket.GetComponent<Rocket>().destroy();
+			}
 			Destroy(gameObject);
 		}
 	}
 
-	public bool hasRocket() {
-		// TODO: yeah.
-		return true;
+	void onRocketDestroyed() {
+		Debug.Log("ROCKET DESTROYED, BUT WE'RE SAVED!");
+		setState((int)PadState.IDLE);
 	}
 
-	public void fire(Vector3 target) { // target is Input.mousePosition
+	protected override void onStateChange() {
+		switch ((PadState)state) {
+		case PadState.IDLE:
+			Debug.Log("IDLE");
+			rocket = null;
+			setState((int)PadState.LOADING);
+			break;
+		case PadState.LOADING:
+			Debug.Log("LOADING");
+			StartCoroutine("spawnRocket");
+			break;
+		case PadState.LOADED:
+			Debug.Log("LOADED");
+			StopCoroutine("spawnRocket"); // this probably already stops by itself
+			break;
+		}
+	}
 
-		GameObject rocket = Instantiate(rocketPrefab) as GameObject;
+	IEnumerator spawnRocket() {
+		yield return new WaitForSeconds(makeRocketDelay);
+		createRocket();
+	}
+
+	void createRocket() {
+		// create the rocket instance
+		rocket = Instantiate(rocketPrefab) as GameObject;
 		rocket.transform.position = transform.position;
+		// listen for its destroyed event
+		Rocket rocketScript = rocket.GetComponent<Rocket>();
+		rocketScript.onRocketDestroyed += onRocketDestroyed;
+		// switch to LOADED
+		setState((int)PadState.LOADED);
+	}
+
+	public bool hasRocket() {
+		return (state == (int)PadState.LOADED);
+	}
+
+	public void fire(Vector3 target) {
 		rocket.GetComponent<Rocket>().setTarget(target);
-
-		// TODO: these should be done when rocket is first added to the pad (somewhere else)
-		// TODO: we'll also need to store the rocket object
-		// TODO: another thing might be to move this "fire" code into Rocket itself
-		//GameObject rocket = Instantiate(rocketPrefab);
-		//rocket.transform.position = transform.position;
-
-		//Vector3 screenPoint = Camera.main.WorldToScreenPoint(rocket.transform.localPosition);
-		//Vector2 offset = new Vector2(target.x - screenPoint.x, target.y - screenPoint.y);
-		//float angle = Mathf.Atan2(offset.y, offset.x) * Mathf.Rad2Deg;
-		//Debug.Log(angle);
-
-		//rocket.GetComponent<Rocket>().setTargetAngle(angle);
-
-		// TODO: this rocket should already have been position, so it just needs to be targeted
-	
+		setState((int)PadState.IDLE);
 	}
 
 }

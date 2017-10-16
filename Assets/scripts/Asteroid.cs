@@ -37,6 +37,9 @@ public class Asteroid : MonoBehaviour {
 		if (collider.gameObject.tag == "Ground") {
 			Destroy(gameObject);
 		}
+		if (collider.gameObject.tag == "Rocket") {
+			Destroy(gameObject);
+		}
 	}
 
 }

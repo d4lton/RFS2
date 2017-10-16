@@ -3,7 +3,15 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody2D))]
-public class Rocket : MonoBehaviour {
+public class Rocket : StateMachineBehavior {
+
+	public enum RocketState {
+		IDLE = 0,
+		FIRING
+	};
+
+	public delegate void RocketDelegate();
+	public event RocketDelegate onRocketDestroyed;
 
 	public float force = 10f;
 	public float initialVelocity = 9.8f;
@@ -13,29 +21,80 @@ public class Rocket : MonoBehaviour {
 	Rigidbody2D rigidBody;
 
 	float targetAngle;
+	Vector3 targetPosition;
 
 	void Start() {
 		rigidBody = GetComponent<Rigidbody2D>();
-		rigidBody.velocity = new Vector2(0, initialVelocity);
+		setState((int)RocketState.IDLE);
 	}
 	
 	void Update() {
-		if (rigidBody.position.y > maxY) {
-			Destroy(gameObject);
-			return;
+		switch ((RocketState)state) {
+		case RocketState.IDLE:
+			break;
+		case RocketState.FIRING:
+			// if we've gone too far, time to go bye-bye
+			if (rigidBody.position.y > maxY || rigidBody.position.y >= targetPosition.y) {
+				explode();
+				return;
+			}
+			// rotate towards the target
+			transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.Euler(0, 0, targetAngle), Time.deltaTime * rotationRate);
+			// accelerate towards the target
+			rigidBody.AddForce(rigidBody.transform.up * Time.deltaTime * force);
+			// TODO: check if we've reached the targetPosition (maybe just check height?)
+			break;
 		}
+	}
 
-		transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.Euler(0, 0, targetAngle), Time.deltaTime * rotationRate);
+	void OnEnable() {
+		GameManager.onGameEnded += onGameEnded;
+	}
 
-		rigidBody.AddForce(rigidBody.transform.up * Time.deltaTime * force);
-	
+	void OnDisable() {
+		GameManager.onGameEnded -= onGameEnded;
+	}
+
+	void OnTriggerEnter2D(Collider2D collider) {
+		if (collider.tag == "Asteroid") {
+			onRocketDestroyed();
+			Destroy(gameObject);
+		}
+	}
+
+	void explode() {
+		Destroy(gameObject);
+	}
+
+	protected override void onStateChange() {
+		switch ((RocketState)state) {
+		case RocketState.IDLE:
+			Debug.Log("IDLE");
+			break;
+		case RocketState.FIRING:
+			Debug.Log("FIRING");
+			break;
+		}
+	}
+
+	void onGameEnded() {
+		Destroy(gameObject);
 	}
 
 	public void setTarget(Vector3 target) {
-		Vector3 direction = transform.position - target;
+		// set up initial target position and angle
+		targetPosition = target;
+		Vector3 direction = transform.position - targetPosition;
 		direction.Normalize();
 		targetAngle = (Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg) + 90.0f;
-		//transform.rotation = Quaternion.Euler(0, 0, targetAngle);
+		// kick the rocket off the pad
+		rigidBody.velocity = new Vector2(0, initialVelocity);
+		// switch to FIRING
+		setState((int)RocketState.FIRING);
+	}
+
+	public void destroy() {
+		Destroy(gameObject);
 	}
 
 }
