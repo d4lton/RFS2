@@ -60,12 +60,10 @@ public class GameManager : StateMachineBehavior {
 	}
 
 	void onPadsCreated() {
-		Debug.Log("onPadsCreated");
 		setState((int)GameState.RUNNING);
 	}
 
 	void onPadsDestroyed() {
-		Debug.Log("onPadsDestroyed");
 		setState((int)GameState.PLAYER_DIED);
 	}
 

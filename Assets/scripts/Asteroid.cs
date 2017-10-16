@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody2D))]
-public class AsteroidManager : MonoBehaviour {
+public class Asteroid : MonoBehaviour {
 
 	Rigidbody2D rigidBody;
 

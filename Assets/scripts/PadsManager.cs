@@ -9,6 +9,7 @@ public class PadsManager : MonoBehaviour {
 	public static event PadsManagerDelegate onPadsDestroyed;
 
 	public GameObject padPrefab;
+	public GameObject rocketPrefab;
 	public int padCount = 3;
 	public float padCreateInterval = 1.0f;
 	public float yPad = -4.0f;
@@ -29,6 +30,25 @@ public class PadsManager : MonoBehaviour {
 	void Update() {
 		if (gameRunning) {
 			// do the stuff and things
+			if (Input.GetMouseButtonDown(0)) {
+				GameObject[] pads = GameObject.FindGameObjectsWithTag("Pad");
+
+				Pad bestPad = null;
+				for (int i = 0; i < pads.Length; i++) {
+					Pad padScript = pads[i].GetComponent<Pad>();
+					// TODO: need to also determine which Pad is closest horizontally to mousePosition.x
+					if (padScript.hasRocket()) {
+						bestPad = padScript;
+					}
+				}
+				if (bestPad != null) {
+					Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+					mousePosition.z = 0f;
+					bestPad.fire(mousePosition);
+				} else {
+					// TODO: ruh roh, no can fire!
+				}
+			}
 		}
 	}
 
@@ -45,22 +65,18 @@ public class PadsManager : MonoBehaviour {
 	}
 
 	void onGameStarted() {
-		Debug.Log("PadsManager onGameStarted");
 		createPads();
 	}
 
 	void onGameRunning() {
-		Debug.Log("PadsManager onGameRunning");
 		gameRunning = true;
 	}
 
 	void onGameEnded() {
-		Debug.Log("PadsManager onGameEnded");
 		gameRunning = false;
 	}
 
 	void onPadDestroyed() {
-		Debug.Log("onPadDestroyed");
 		padsLeft--;
 		if (padsLeft <= 0) {
 			if (onPadsDestroyed != null) {
@@ -75,7 +91,6 @@ public class PadsManager : MonoBehaviour {
 
 	IEnumerator spawnPads() {
 		for (int i = 0; i < padCount; i++) {
-			Debug.Log("creating pad");
 			createPad(i);
 			yield return new WaitForSeconds(padCreateInterval);
 		}
@@ -87,8 +102,8 @@ public class PadsManager : MonoBehaviour {
 
 	private void createPad(int i) {
 		GameObject pad = Instantiate(padPrefab);
-		PadManager padManager = pad.GetComponent<PadManager>();
-		padManager.onPadDestroyed += onPadDestroyed;
+		Pad padScript = pad.GetComponent<Pad>();
+		padScript.onPadDestroyed += onPadDestroyed;
 		pad.transform.position = new Vector3(xPadOffset * (i - (padCount / 2)), yPad, 0);
 	}
 
