@@ -152,13 +152,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ac54f6472790e435bbdda51f62f61247, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Prefab: {fileID: 1111014347915864, guid: 154d2165eb3af4ffa87d69201f1e50ad, type: 2}
+  prefab: {fileID: 1111014347915864, guid: 154d2165eb3af4ffa87d69201f1e50ad, type: 2}
   poolSize: 3
-  shiftSpeed: 0.135
-  spawnRate: 120
+  shiftSpeed: 0.07
+  spawnRate: 110
+  xSpawnRange:
+    min: 0
+    max: 0
   ySpawnRange:
-    min: -0.1
-    max: 0.1
+    min: -0.15
+    max: 0.15
   defaultSpawnPos: {x: 10, y: 0, z: 0}
   immediate: 1
   immediateSpawnPos: {x: 0, y: 0, z: 0}
@@ -202,14 +205,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ac54f6472790e435bbdda51f62f61247, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Prefab: {fileID: 1752158580937008, guid: 82e445bc1a6554cccb8d3de5ff85d89d, type: 2}
+  prefab: {fileID: 1752158580937008, guid: 82e445bc1a6554cccb8d3de5ff85d89d, type: 2}
   poolSize: 3
   shiftSpeed: 0.25
-  spawnRate: 60
+  spawnRate: 70
+  xSpawnRange:
+    min: 0
+    max: 0
   ySpawnRange:
     min: -0.1
     max: 0.1
-  defaultSpawnPos: {x: 15, y: 0, z: 0}
+  defaultSpawnPos: {x: 19, y: 0, z: 0}
   immediate: 1
   immediateSpawnPos: {x: 0, y: 0, z: 0}
 --- !u!1 &790693548
@@ -463,7 +469,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 1
-  m_BackGroundColor: {r: 0.2352941, g: 0.2352941, b: 0.2352941, a: 1}
+  m_BackGroundColor: {r: 0, g: 0, b: 0, a: 1}
   m_NormalizedViewPortRect:
     serializedVersion: 2
     x: 0
@@ -519,7 +525,7 @@ MonoBehaviour:
     type: 2}
   padPrefab: {fileID: 1001601454777100, guid: 36f80802578344067a63f13e8c3e61e9, type: 2}
   asteroidSpawnRateMin: 1
-  asteroifSpawnRateMax: 3
+  asteroidSpawnRateMax: 4
 --- !u!114 &1145633489
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -531,10 +537,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ac54f6472790e435bbdda51f62f61247, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Prefab: {fileID: 1381973265612898, guid: 82e445bc1a6554cccb8d3de5ff85d89d, type: 2}
+  prefab: {fileID: 0}
   poolSize: 0
   shiftSpeed: 0
   spawnRate: 0
+  xSpawnRange:
+    min: 0
+    max: 0
   ySpawnRange:
     min: 0
     max: 0
@@ -1011,7 +1020,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1674827578
 RectTransform:
   m_ObjectHideFlags: 0

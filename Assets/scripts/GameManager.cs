@@ -14,6 +14,7 @@ public class GameManager : StateMachineBehavior {
 
 	public delegate void GameManagerDelegate();
 	public static event GameManagerDelegate onGameStarted;
+	public static event GameManagerDelegate onGameRunning;
 	public static event GameManagerDelegate onGameEnded;
 
 	public GameObject startPage;
@@ -23,8 +24,6 @@ public class GameManager : StateMachineBehavior {
 	public int asteroidSpawnRateMin = 2;
 	public int asteroidSpawnRateMax = 4;
 
-	PadsManager padsManager;
-
 	public static GameManager instance;
 
 	void Awake() {
@@ -32,7 +31,6 @@ public class GameManager : StateMachineBehavior {
 	}
 
 	void Start() {
-		padsManager = PadsManager.instance;
 		setState((int)GameState.ENDED);
 	}
 
@@ -88,7 +86,7 @@ public class GameManager : StateMachineBehavior {
 			break;
 		case GameState.STARTING:
 			Debug.Log("STARTING");
-			setupGame();
+			startGame();
 			break;
 		case GameState.RUNNING:
 			Debug.Log("RUNNING");
@@ -113,20 +111,22 @@ public class GameManager : StateMachineBehavior {
 		}
 	}
 
-	private void setupGame() {
+	private void startGame() {
 		// show the Start Game page
 		startPage.SetActive(false);
 		gameOverPage.SetActive(false);
-		// spawn launchpads
-		padsManager.createPads();
+		// let everyone know the game is starting
+		if (onGameStarted != null) {
+			onGameStarted();
+		}
 	}
 
 	private void runGame() {
 		// start spawning the asteroids
 		StartCoroutine("spawnAsteroids");
-		// let everyone know the game has started
-		if (onGameStarted != null) {
-			onGameStarted();
+		// let everyone know the game is running
+		if (onGameRunning != null) {
+			onGameRunning();
 		}
 	}
 

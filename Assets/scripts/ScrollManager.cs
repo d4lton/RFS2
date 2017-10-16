@@ -8,25 +8,23 @@ public class ScrollManager : MonoBehaviour {
 		public Transform transform;
 		public bool inUse = false;
 		public PoolObject(Transform t) {transform = t;}
-		public void Use() {inUse = true;}
-		public void Dispose() {
-			inUse = false;
-			//transform.position = Vector3.one * 1000;
-		}
+		public void acquire() {inUse = true;}
+		public void release() {inUse = false;}
 	}
 
 	[System.Serializable]
-	public struct YSpawnRange {
+	public struct SpawnRange {
 		public float min;
 		public float max;
 	}
 
-	public GameObject Prefab;
+	public GameObject prefab;
 	public int poolSize;
 	public float shiftSpeed;
 	public float spawnRate;
 
-	public YSpawnRange ySpawnRange;
+	public SpawnRange xSpawnRange;
+	public SpawnRange ySpawnRange;
 	public Vector3 defaultSpawnPos;
 	public bool immediate;
 	public Vector3 immediateSpawnPos;
@@ -53,7 +51,7 @@ public class ScrollManager : MonoBehaviour {
 	void configure() {
 		poolObjects = new PoolObject[poolSize];
 		for (int i = 0; i < poolObjects.Length; i++) {
-			GameObject gameObject = Instantiate(Prefab) as GameObject;
+			GameObject gameObject = Instantiate(prefab) as GameObject;
 			Transform t = gameObject.transform;
 			t.SetParent(transform);
 			t.position = Vector3.one * -1000;
@@ -62,12 +60,13 @@ public class ScrollManager : MonoBehaviour {
 		if (immediate) {
 			spawnImmediate();
 		}
+		spawn(); // spawn a prefab in the default position, since it'll be "spawnRate" seconds before this is done
 	}
 
 	void spawn() {
 		PoolObject poolObject = getPoolObject();
 		if (poolObject != null) {
-			poolObject.transform.localPosition = new Vector3(defaultSpawnPos.x, Random.Range(ySpawnRange.min, ySpawnRange.max), 0);
+			poolObject.transform.localPosition = new Vector3(defaultSpawnPos.x + Random.Range(xSpawnRange.min, xSpawnRange.max), Random.Range(ySpawnRange.min, ySpawnRange.max), 0);
 		}
 	}
 
@@ -76,7 +75,6 @@ public class ScrollManager : MonoBehaviour {
 		if (poolObject != null) {
 			poolObject.transform.localPosition = new Vector3(immediateSpawnPos.x, Random.Range(ySpawnRange.min, ySpawnRange.max), 0);
 		}
-		spawn();
 	}
 
 	void shift() {
@@ -90,7 +88,7 @@ public class ScrollManager : MonoBehaviour {
 
 	void checkDisposeObject(PoolObject poolObject) {
 		if (poolObject.transform.localPosition.x < -defaultSpawnPos.x) {
-			poolObject.Dispose();
+			poolObject.release();
 			poolObject.transform.position = Vector3.one * -1000;
 		}
 	}
@@ -98,7 +96,7 @@ public class ScrollManager : MonoBehaviour {
 	PoolObject getPoolObject() {
 		for (int i = 0; i < poolObjects.Length; i++) {
 			if (!poolObjects[i].inUse) {
-				poolObjects[i].Use();
+				poolObjects[i].acquire();
 				return poolObjects[i];
 			}
 		}

@@ -17,6 +17,7 @@ public class PadsManager : MonoBehaviour {
 	public static PadsManager instance;
 
 	int padsLeft = 0;
+	bool gameRunning = false;
 
 	void Awake() {
 		instance = this;
@@ -26,24 +27,49 @@ public class PadsManager : MonoBehaviour {
 	}
 	
 	void Update() {
+		if (gameRunning) {
+			// do the stuff and things
+		}
 	}
 
-	void onEnable() {
+	void OnEnable() {
+		GameManager.onGameStarted += onGameStarted;
+		GameManager.onGameRunning += onGameRunning;
+		GameManager.onGameEnded += onGameEnded;
 	}
 
-	void onDisable() {
+	void OnDisable() {
+		GameManager.onGameStarted -= onGameStarted;
+		GameManager.onGameRunning -= onGameRunning;
+		GameManager.onGameEnded -= onGameEnded;
+	}
+
+	void onGameStarted() {
+		Debug.Log("PadsManager onGameStarted");
+		createPads();
+	}
+
+	void onGameRunning() {
+		Debug.Log("PadsManager onGameRunning");
+		gameRunning = true;
+	}
+
+	void onGameEnded() {
+		Debug.Log("PadsManager onGameEnded");
+		gameRunning = false;
 	}
 
 	void onPadDestroyed() {
 		Debug.Log("onPadDestroyed");
 		padsLeft--;
 		if (padsLeft <= 0) {
-			onPadsDestroyed();
+			if (onPadsDestroyed != null) {
+				onPadsDestroyed();
+			}
 		}
 	}
 
 	public void createPads() {
-		// create pads, when done, call onPadsCreated()
 		StartCoroutine("spawnPads");
 	}
 
@@ -54,7 +80,9 @@ public class PadsManager : MonoBehaviour {
 			yield return new WaitForSeconds(padCreateInterval);
 		}
 		padsLeft = padCount;
-		onPadsCreated();
+		if (onPadsCreated != null) {
+			onPadsCreated();
+		}
 	}
 
 	private void createPad(int i) {
