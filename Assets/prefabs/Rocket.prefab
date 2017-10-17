@@ -99,10 +99,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 770048f1badf84048b35c84ad4d00fe1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  explosionPrefab: {fileID: 1088604316920586, guid: 4fa09846e5d3e47ab97c0a56ed8a405b,
+    type: 2}
   force: 500
   initialVelocity: 0
   maxY: 5
-  rotationRate: 50
+  rotationRate: 75
+  triggerDistance: 0.5
 --- !u!212 &212103691252576516
 SpriteRenderer:
   m_ObjectHideFlags: 1

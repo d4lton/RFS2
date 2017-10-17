@@ -14,6 +14,7 @@ public class Pad : StateMachineBehavior {
 	public event PadDelegate onPadDestroyed;
 
 	public GameObject rocketPrefab;
+	public GameObject explosionPrefab;
 	public float makeRocketDelay = 3.0f;
 
 	GameObject rocket;
@@ -33,28 +34,31 @@ public class Pad : StateMachineBehavior {
 			if (rocket != null) { // there's a rocket on the pad, kill it too
 				rocket.GetComponent<Rocket>().destroy();
 			}
-			Destroy(gameObject);
+			explode();
 		}
 	}
 
+	void explode() {
+		GameObject explosion = Instantiate(explosionPrefab) as GameObject;
+		explosion.transform.position = transform.position;
+		Destroy(gameObject);
+	}
+
 	void onRocketDestroyed() {
-		Debug.Log("ROCKET DESTROYED, BUT WE'RE SAVED!");
+		Debug.Log("ROCKET DESTROYED ON PAD");
 		setState((int)PadState.IDLE);
 	}
 
 	protected override void onStateChange() {
 		switch ((PadState)state) {
 		case PadState.IDLE:
-			Debug.Log("IDLE");
 			rocket = null;
 			setState((int)PadState.LOADING);
 			break;
 		case PadState.LOADING:
-			Debug.Log("LOADING");
 			StartCoroutine("spawnRocket");
 			break;
 		case PadState.LOADED:
-			Debug.Log("LOADED");
 			StopCoroutine("spawnRocket"); // this probably already stops by itself
 			break;
 		}

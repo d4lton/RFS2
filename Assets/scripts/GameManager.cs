@@ -78,20 +78,16 @@ public class GameManager : StateMachineBehavior {
 	protected override void onStateChange() {
 		switch ((GameState)state) {
 		case GameState.ENDED:
-			Debug.Log("ENDED");
 			startPage.SetActive(true);
 			gameOverPage.SetActive(false);
 			break;
 		case GameState.STARTING:
-			Debug.Log("STARTING");
 			startGame();
 			break;
 		case GameState.RUNNING:
-			Debug.Log("RUNNING");
 			runGame();
 			break;
 		case GameState.PLAYER_DIED:
-			Debug.Log("PLAYER_DIED");
 			endGame();
 			break;
 		}

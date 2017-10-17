@@ -8,6 +8,8 @@ TagManager:
   - Rocket
   - Asteroid
   - Pad
+  - Explosion
+  - PadExplosion
   layers:
   - Default
   - TransparentFX

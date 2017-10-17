@@ -13,15 +13,17 @@ public class Rocket : StateMachineBehavior {
 	public delegate void RocketDelegate();
 	public event RocketDelegate onRocketDestroyed;
 
+	public GameObject explosionPrefab;
 	public float force = 10f;
 	public float initialVelocity = 9.8f;
 	public float maxY = 5.0f;
 	public float rotationRate = 1.5f;
+	public float triggerDistance = 1.0f;
 
 	Rigidbody2D rigidBody;
 
 	float targetAngle;
-	Vector3 targetPosition;
+	Vector2 targetPosition;
 
 	void Start() {
 		rigidBody = GetComponent<Rigidbody2D>();
@@ -34,7 +36,7 @@ public class Rocket : StateMachineBehavior {
 			break;
 		case RocketState.FIRING:
 			// if we've gone too far, time to go bye-bye
-			if (rigidBody.position.y > maxY || rigidBody.position.y >= targetPosition.y) {
+			if (rigidBody.position.y > maxY || reachedTarget()) {
 				explode();
 				return;
 			}
@@ -58,21 +60,30 @@ public class Rocket : StateMachineBehavior {
 	void OnTriggerEnter2D(Collider2D collider) {
 		if (collider.tag == "Asteroid") {
 			onRocketDestroyed();
-			Destroy(gameObject);
+			if (state == (int)RocketState.FIRING) {
+				Debug.Log("ROCKET DESTROYED ASTEROID, SCORE!");
+			}
+			explode();
 		}
 	}
 
+	bool reachedTarget() {
+		float magnitude = (rigidBody.position - targetPosition).magnitude;
+		return (magnitude <= triggerDistance);
+	}
+
 	void explode() {
+		GameObject explosion = Instantiate(explosionPrefab) as GameObject;
+		explosion.transform.position = transform.position;
+		explosion.tag = tag; // the explosion should act as a proxy for the rocket
 		Destroy(gameObject);
 	}
 
 	protected override void onStateChange() {
 		switch ((RocketState)state) {
 		case RocketState.IDLE:
-			Debug.Log("IDLE");
 			break;
 		case RocketState.FIRING:
-			Debug.Log("FIRING");
 			break;
 		}
 	}
@@ -84,7 +95,7 @@ public class Rocket : StateMachineBehavior {
 	public void setTarget(Vector3 target) {
 		// set up initial target position and angle
 		targetPosition = target;
-		Vector3 direction = transform.position - targetPosition;
+		Vector3 direction = transform.position - target;
 		direction.Normalize();
 		targetAngle = (Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg) + 90.0f;
 		// kick the rocket off the pad

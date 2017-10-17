@@ -80,6 +80,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rocketPrefab: {fileID: 1539002602120788, guid: fa851995d9e774e449ce97fd96188928,
     type: 2}
+  explosionPrefab: {fileID: 1088604316920586, guid: 4fa09846e5d3e47ab97c0a56ed8a405b,
+    type: 2}
+  makeRocketDelay: 3
 --- !u!212 &212629748283616174
 SpriteRenderer:
   m_ObjectHideFlags: 1

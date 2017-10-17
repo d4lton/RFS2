@@ -14,11 +14,14 @@ public class Asteroid : MonoBehaviour {
 	void Start() {
 		rigidBody = GetComponent<Rigidbody2D>();
 		rigidBody.transform.position = new Vector3((float)Random.Range(-xStartOffset, xStartOffset), yStart, 0f);
-		// TODO: the x position of the asteroid should be used to temper the force, so asteroids don't go flying off-screen
 		rigidBody.AddForce(Vector2.right * (float)Random.Range(-xForce, xForce), ForceMode2D.Force);
 	}
 	
 	void Update() {
+		if (rigidBody.velocity != Vector2.zero) {
+			float angle = Mathf.Atan2(rigidBody.velocity.y, rigidBody.velocity.x) * Mathf.Rad2Deg;
+			transform.rotation = Quaternion.AngleAxis(angle + 90f, Vector3.forward);
+		}
 	}
 
 	void OnEnable() {
