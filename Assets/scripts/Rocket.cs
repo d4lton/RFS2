@@ -13,6 +13,9 @@ public class Rocket : StateMachineBehavior {
 	public delegate void RocketDelegate();
 	public event RocketDelegate onRocketDestroyed;
 
+	public delegate void ScoreDelegate(int value);
+	public static event ScoreDelegate onScored;
+
 	public GameObject explosionPrefab;
 	public float force = 10f;
 	public float initialVelocity = 9.8f;
@@ -61,7 +64,13 @@ public class Rocket : StateMachineBehavior {
 		if (collider.tag == "Asteroid") {
 			onRocketDestroyed();
 			if (state == (int)RocketState.FIRING) {
-				Debug.Log("ROCKET DESTROYED ASTEROID, SCORE!");
+				if (onScored != null) {
+					onScored(200);
+				}
+			} else {
+				if (onScored != null) {
+					onScored(-50);
+				}
 			}
 			explode();
 		}
@@ -75,7 +84,7 @@ public class Rocket : StateMachineBehavior {
 	void explode() {
 		GameObject explosion = Instantiate(explosionPrefab) as GameObject;
 		explosion.transform.position = transform.position;
-		explosion.tag = tag; // the explosion should act as a proxy for the rocket
+		explosion.tag = tag; // the explosion should act as a proxy for this GameObject
 		Destroy(gameObject);
 	}
 

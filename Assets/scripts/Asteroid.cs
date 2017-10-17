@@ -7,6 +7,7 @@ public class Asteroid : MonoBehaviour {
 
 	Rigidbody2D rigidBody;
 
+	public GameObject explosionPrefab;
 	public float yStart = 7.0f;
 	public float xStartOffset = 3.0f;
 	public float xForce = 80.0f;
@@ -36,12 +37,20 @@ public class Asteroid : MonoBehaviour {
 		Destroy(gameObject);
 	}
 
+	private void explode() {
+		GameObject explosion = Instantiate(explosionPrefab) as GameObject;
+		explosion.GetComponent<Explosion>().disableColliders();
+		explosion.transform.position = transform.position;
+		Destroy(gameObject);
+	}
+
 	void OnTriggerEnter2D(Collider2D collider) {
 		if (collider.gameObject.tag == "Ground") {
-			Destroy(gameObject);
+			explode();
+			// TODO: hitting the ground should incur a penalty, like burning for awhile and preventing rocket reload?
 		}
 		if (collider.gameObject.tag == "Rocket") {
-			Destroy(gameObject);
+			explode();
 		}
 	}
 

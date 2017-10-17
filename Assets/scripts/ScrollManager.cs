@@ -36,9 +36,6 @@ public class ScrollManager : MonoBehaviour {
 		configure();
 	}
 
-	void Start() {
-	}
-	
 	void Update() {
 		shift();
 		spawnTimer += Time.deltaTime;

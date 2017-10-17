@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Pad : StateMachineBehavior {
+	
+	public delegate void ScoreDelegate(int value);
+	public static event ScoreDelegate onScored;
 
 	public enum PadState {
 		IDLE = 0,
@@ -23,7 +26,16 @@ public class Pad : StateMachineBehavior {
 		setState((int)PadState.IDLE);
 	}
 
-	void Update() {
+	void OnEnable() {
+		GameManager.onGameEnded += onGameEnded;
+	}
+
+	void OnDisable() {
+		GameManager.onGameEnded -= onGameEnded;
+	}
+
+	void onGameEnded() {
+		Destroy(gameObject);
 	}
 
 	void OnTriggerEnter2D(Collider2D collider) {
@@ -33,6 +45,13 @@ public class Pad : StateMachineBehavior {
 			}
 			if (rocket != null) { // there's a rocket on the pad, kill it too
 				rocket.GetComponent<Rocket>().destroy();
+				if (onScored != null) {
+					onScored(-100);
+				}
+			} else {
+				if (onScored != null) {
+					onScored(-50);
+				}
 			}
 			explode();
 		}
@@ -40,12 +59,12 @@ public class Pad : StateMachineBehavior {
 
 	void explode() {
 		GameObject explosion = Instantiate(explosionPrefab) as GameObject;
+		explosion.GetComponent<Explosion>().disableColliders();
 		explosion.transform.position = transform.position;
 		Destroy(gameObject);
 	}
 
 	void onRocketDestroyed() {
-		Debug.Log("ROCKET DESTROYED ON PAD");
 		setState((int)PadState.IDLE);
 	}
 
@@ -64,12 +83,7 @@ public class Pad : StateMachineBehavior {
 		}
 	}
 
-	IEnumerator spawnRocket() {
-		yield return new WaitForSeconds(makeRocketDelay);
-		createRocket();
-	}
-
-	void createRocket() {
+	private void createRocket() {
 		// create the rocket instance
 		rocket = Instantiate(rocketPrefab) as GameObject;
 		rocket.transform.position = transform.position;
@@ -78,6 +92,11 @@ public class Pad : StateMachineBehavior {
 		rocketScript.onRocketDestroyed += onRocketDestroyed;
 		// switch to LOADED
 		setState((int)PadState.LOADED);
+	}
+
+	IEnumerator spawnRocket() {
+		yield return new WaitForSeconds(makeRocketDelay);
+		createRocket();
 	}
 
 	public bool hasRocket() {

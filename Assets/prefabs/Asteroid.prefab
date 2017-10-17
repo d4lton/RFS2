@@ -120,6 +120,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9ad3d9e8a5862438fb882e0e0a23fb50, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  explosionPrefab: {fileID: 1088604316920586, guid: 4fa09846e5d3e47ab97c0a56ed8a405b,
+    type: 2}
   yStart: 7
   xStartOffset: 2.5
   xForce: 60

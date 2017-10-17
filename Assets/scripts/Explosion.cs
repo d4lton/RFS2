@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Explosion : MonoBehaviour {
+	
+	public delegate void ScoreDelegate(int value);
+	public static event ScoreDelegate onScored;
 
 	public float lifetime = 0.5f;
 
@@ -13,9 +16,15 @@ public class Explosion : MonoBehaviour {
 	void OnTriggerEnter2D(Collider2D collider) {
 		if (collider.tag == "Asteroid") {
 			if (tag == "Rocket") {
-				Debug.Log("ASTEROID HIT BLASTWAVE, SCORE!");
+				if (onScored != null) {
+					onScored(100);
+				}
 			}
 		}
+	}
+
+	private void die() {
+		Destroy(gameObject);
 	}
 
 	IEnumerator awaitDeath() {
@@ -23,8 +32,10 @@ public class Explosion : MonoBehaviour {
 		die();
 	}
 
-	void die() {
-		Destroy(gameObject);
+	public void disableColliders() {
+		foreach(Collider collider in GetComponents<Collider>()) {
+			collider.enabled = false;
+		}
 	}
 
 }

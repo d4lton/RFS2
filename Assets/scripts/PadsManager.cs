@@ -18,15 +18,8 @@ public class PadsManager : MonoBehaviour {
 	int padsLeft = 0;
 	bool gameRunning = false;
 
-	void Awake() {
-	}
-
-	void Start() {
-	}
-	
 	void Update() {
 		if (gameRunning) {
-			// do the stuff and things
 			if (Input.GetMouseButtonDown(0)) {
 				// get mouse position in world coordinates, clear out z
 				Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
@@ -37,29 +30,11 @@ public class PadsManager : MonoBehaviour {
 				if (bestPad != null) {
 					bestPad.fire(mousePosition);
 				} else {
-					// TODO: ruh roh, no can fire!
+					// TODO: ruh roh, no can fire! make blerp sound!
 				}
 
 			}
 		}
-	}
-
-	Pad getBestPadToLaunch(Vector3 mousePosition) {
-		GameObject[] pads = GameObject.FindGameObjectsWithTag("Pad");
-		Pad bestPad = null;
-		float minDistance = Mathf.Infinity;
-		// find pad with rocket, closest vertically to the mouse click
-		for (int i = 0; i < pads.Length; i++) {
-			Pad padScript = pads[i].GetComponent<Pad>();
-			if (padScript.hasRocket()) {
-				float distance = Mathf.Abs(mousePosition.x - pads[i].transform.position.x);
-				if (distance < minDistance) {
-					minDistance = distance;
-					bestPad = padScript;
-				}
-			}
-		}
-		return bestPad;
 	}
 
 	void OnEnable() {
@@ -95,8 +70,33 @@ public class PadsManager : MonoBehaviour {
 		}
 	}
 
-	public void createPads() {
+	private Pad getBestPadToLaunch(Vector3 mousePosition) {
+		GameObject[] pads = GameObject.FindGameObjectsWithTag("Pad");
+		Pad bestPad = null;
+		float minDistance = Mathf.Infinity;
+		// find pad with rocket, closest horizontally to the mouse click
+		for (int i = 0; i < pads.Length; i++) {
+			Pad padScript = pads[i].GetComponent<Pad>();
+			if (padScript.hasRocket()) {
+				float distance = Mathf.Abs(mousePosition.x - pads[i].transform.position.x);
+				if (distance < minDistance) {
+					minDistance = distance;
+					bestPad = padScript;
+				}
+			}
+		}
+		return bestPad;
+	}
+
+	private void createPads() {
 		StartCoroutine("spawnPads");
+	}
+
+	private void createPad(int i) {
+		GameObject pad = Instantiate(padPrefab);
+		Pad padScript = pad.GetComponent<Pad>();
+		padScript.onPadDestroyed += onPadDestroyed;
+		pad.transform.position = new Vector3(xPadOffset * (i - (padCount / 2)), yPad, 0);
 	}
 
 	IEnumerator spawnPads() {
@@ -108,13 +108,6 @@ public class PadsManager : MonoBehaviour {
 		if (onPadsCreated != null) {
 			onPadsCreated();
 		}
-	}
-
-	private void createPad(int i) {
-		GameObject pad = Instantiate(padPrefab);
-		Pad padScript = pad.GetComponent<Pad>();
-		padScript.onPadDestroyed += onPadDestroyed;
-		pad.transform.position = new Vector3(xPadOffset * (i - (padCount / 2)), yPad, 0);
 	}
 
 }
