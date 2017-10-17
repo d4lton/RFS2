@@ -15,13 +15,10 @@ public class PadsManager : MonoBehaviour {
 	public float yPad = -4.0f;
 	public float xPadOffset = -2.0f;
 
-	public static PadsManager instance;
-
 	int padsLeft = 0;
 	bool gameRunning = false;
 
 	void Awake() {
-		instance = this;
 	}
 
 	void Start() {
@@ -31,25 +28,38 @@ public class PadsManager : MonoBehaviour {
 		if (gameRunning) {
 			// do the stuff and things
 			if (Input.GetMouseButtonDown(0)) {
-				GameObject[] pads = GameObject.FindGameObjectsWithTag("Pad");
+				// get mouse position in world coordinates, clear out z
+				Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+				mousePosition.z = 0f;
 
-				Pad bestPad = null;
-				for (int i = 0; i < pads.Length; i++) {
-					Pad padScript = pads[i].GetComponent<Pad>();
-					// TODO: need to also determine which Pad is closest horizontally to mousePosition.x
-					if (padScript.hasRocket()) {
-						bestPad = padScript;
-					}
-				}
+				// find the best pad to launch from, if any
+				Pad bestPad = getBestPadToLaunch(mousePosition);
 				if (bestPad != null) {
-					Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-					mousePosition.z = 0f;
 					bestPad.fire(mousePosition);
 				} else {
 					// TODO: ruh roh, no can fire!
 				}
+
 			}
 		}
+	}
+
+	Pad getBestPadToLaunch(Vector3 mousePosition) {
+		GameObject[] pads = GameObject.FindGameObjectsWithTag("Pad");
+		Pad bestPad = null;
+		float minDistance = Mathf.Infinity;
+		// find pad with rocket, closest vertically to the mouse click
+		for (int i = 0; i < pads.Length; i++) {
+			Pad padScript = pads[i].GetComponent<Pad>();
+			if (padScript.hasRocket()) {
+				float distance = Mathf.Abs(mousePosition.x - pads[i].transform.position.x);
+				if (distance < minDistance) {
+					minDistance = distance;
+					bestPad = padScript;
+				}
+			}
+		}
+		return bestPad;
 	}
 
 	void OnEnable() {
