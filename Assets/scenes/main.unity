@@ -596,7 +596,7 @@ MonoBehaviour:
   padPrefab: {fileID: 1001601454777100, guid: 36f80802578344067a63f13e8c3e61e9, type: 2}
   asteroidSpawnRateMin: 1
   asteroidSpawnRateMax: 4
-  initialScore: 500
+  initialScore: 0
   difficultyInterval: 20
 --- !u!114 &1145633489
 MonoBehaviour:
@@ -705,7 +705,7 @@ RectTransform:
   m_GameObject: {fileID: 1151541812}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 90}
-  m_LocalScale: {x: 0.008333334, y: 0.008333334, z: 0.008333334}
+  m_LocalScale: {x: 0.0078125, y: 0.0078125, z: 0.0078125}
   m_Children:
   - {fileID: 790693549}
   - {fileID: 1674827578}
@@ -743,7 +743,7 @@ RectTransform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1243877369}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.000015258789, y: -201.99997, z: 0}
+  m_LocalPosition: {x: 0.000015258789, y: -215.4333, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 790693549}
@@ -863,7 +863,7 @@ RectTransform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1288630309}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2.5000305, y: 290.50003, z: 0}
+  m_LocalPosition: {x: 2.5000305, y: 309.93338, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 790693549}
@@ -944,7 +944,7 @@ RectTransform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1316122402}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.000015258789, y: -199.99998, z: 0}
+  m_LocalPosition: {x: 0.000015258789, y: -213.33333, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1674827578}
@@ -1293,7 +1293,7 @@ RectTransform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 2067860978}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.000030517578, y: 316, z: 0}
+  m_LocalPosition: {x: 0.000030517578, y: 337.23334, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1674827578}
@@ -1367,7 +1367,7 @@ RectTransform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 2068820677}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2.100006, y: 493.10013, z: 0}
+  m_LocalPosition: {x: 2.100006, y: 525.9668, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1401925597}
@@ -1404,7 +1404,7 @@ MonoBehaviour:
     m_BestFit: 1
     m_MinSize: 10
     m_MaxSize: 100
-    m_Alignment: 4
+    m_Alignment: 5
     m_AlignByGeometry: 0
     m_RichText: 1
     m_HorizontalOverflow: 0

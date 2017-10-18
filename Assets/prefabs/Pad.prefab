@@ -82,6 +82,8 @@ MonoBehaviour:
     type: 2}
   explosionPrefab: {fileID: 1088604316920586, guid: 4fa09846e5d3e47ab97c0a56ed8a405b,
     type: 2}
+  brokenPadPrefab: {fileID: 1162846616632542, guid: 8084ecdff29cb4ef1b21f820f4bb2208,
+    type: 2}
   makeRocketDelay: 3
 --- !u!212 &212629748283616174
 SpriteRenderer:

@@ -18,6 +18,7 @@ public class Pad : StateMachineBehavior {
 
 	public GameObject rocketPrefab;
 	public GameObject explosionPrefab;
+	public GameObject brokenPadPrefab;
 	public float makeRocketDelay = 3.0f;
 
 	GameObject rocket;
@@ -40,9 +41,6 @@ public class Pad : StateMachineBehavior {
 
 	void OnTriggerEnter2D(Collider2D collider) {
 		if (collider.tag == "Asteroid") {
-			if (onPadDestroyed != null) {
-				onPadDestroyed();
-			}
 			if (rocket != null) { // there's a rocket on the pad, kill it too
 				rocket.GetComponent<Rocket>().destroy();
 				if (onScored != null) {
@@ -58,9 +56,21 @@ public class Pad : StateMachineBehavior {
 	}
 
 	void explode() {
+
+		// create an explosion over the pad
 		GameObject explosion = Instantiate(explosionPrefab) as GameObject;
 		explosion.GetComponent<Explosion>().disableColliders();
 		explosion.transform.position = transform.position;
+
+		// create a broken pad over the pad
+
+		GameObject brokenPad = Instantiate(brokenPadPrefab) as GameObject;
+		brokenPad.transform.position = transform.position;
+
+		// remove the pad
+		if (onPadDestroyed != null) {
+			onPadDestroyed();
+		}
 		Destroy(gameObject);
 	}
 
