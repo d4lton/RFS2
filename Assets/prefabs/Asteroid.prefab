@@ -86,7 +86,7 @@ Rigidbody2D:
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
   m_Mass: 0.5
-  m_LinearDrag: 1
+  m_LinearDrag: 2
   m_AngularDrag: 0
   m_GravityScale: 0.25
   m_Material: {fileID: 0}
@@ -125,6 +125,9 @@ MonoBehaviour:
   yStart: 7
   xStartOffset: 2.5
   xForce: 60
+  yParticleShutoff: 1
+  yParticleDecayRate: 0.001
+  difficultyDownForce: 50
 --- !u!198 &198442371873579510
 ParticleSystem:
   m_ObjectHideFlags: 1

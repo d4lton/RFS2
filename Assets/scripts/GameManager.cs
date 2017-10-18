@@ -25,10 +25,13 @@ public class GameManager : StateMachineBehavior {
 	public int asteroidSpawnRateMin = 2;
 	public int asteroidSpawnRateMax = 4;
 	public int initialScore = 500;
+	public float difficultyInterval = 20.0f;
 
 	public static GameManager instance;
 
 	int score;
+	float difficultyTime = 0f;
+	int difficultyLevel = 0;
 
 	void Awake() {
 		instance = this;
@@ -36,6 +39,14 @@ public class GameManager : StateMachineBehavior {
 
 	void Start() {
 		setState((int)GameState.ENDED);
+	}
+
+	void Update() {
+		difficultyTime += Time.deltaTime;
+		if (difficultyTime > difficultyInterval) {
+			difficultyLevel++;
+			difficultyTime = 0f;
+		}
 	}
 
 	void OnEnable() {
@@ -164,6 +175,10 @@ public class GameManager : StateMachineBehavior {
 
 	public void onRestartClicked() {
 		setState((int)GameState.ENDED);
+	}
+
+	public int getDifficultyLevel() {
+		return difficultyLevel;
 	}
 
 }
