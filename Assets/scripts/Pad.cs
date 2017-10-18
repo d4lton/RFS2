@@ -56,6 +56,7 @@ public class Pad : StateMachineBehavior {
 	}
 
 	void explode() {
+		GameManager.instance.playClip("pad");
 
 		// create an explosion over the pad
 		GameObject explosion = Instantiate(explosionPrefab) as GameObject;
@@ -66,6 +67,8 @@ public class Pad : StateMachineBehavior {
 
 		GameObject brokenPad = Instantiate(brokenPadPrefab) as GameObject;
 		brokenPad.transform.position = transform.position;
+
+		//source.PlayOneShot(explosionClip);
 
 		// remove the pad
 		if (onPadDestroyed != null) {
@@ -93,7 +96,7 @@ public class Pad : StateMachineBehavior {
 		}
 	}
 
-	private void createRocket() {
+	void createRocket() {
 		// create the rocket instance
 		rocket = Instantiate(rocketPrefab) as GameObject;
 		rocket.transform.position = transform.position;

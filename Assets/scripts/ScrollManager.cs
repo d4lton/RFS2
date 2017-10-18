@@ -75,10 +75,12 @@ public class ScrollManager : MonoBehaviour {
 	}
 
 	void shift() {
-		for (int i = 0; i < poolObjects.Length; i++) {
-			if (poolObjects[i].inUse) {
-				poolObjects[i].transform.localPosition += -Vector3.right * shiftSpeed * Time.deltaTime;
-				checkDisposeObject(poolObjects[i]);
+		if (poolObjects != null) {
+			for (int i = 0; i < poolObjects.Length; i++) {
+				if (poolObjects[i].inUse) {
+					poolObjects[i].transform.localPosition += -Vector3.right * shiftSpeed * Time.deltaTime;
+					checkDisposeObject(poolObjects[i]);
+				}
 			}
 		}
 	}
@@ -91,10 +93,12 @@ public class ScrollManager : MonoBehaviour {
 	}
 
 	PoolObject getPoolObject() {
-		for (int i = 0; i < poolObjects.Length; i++) {
-			if (!poolObjects[i].inUse) {
-				poolObjects[i].acquire();
-				return poolObjects[i];
+		if (poolObjects != null) {
+			for (int i = 0; i < poolObjects.Length; i++) {
+				if (!poolObjects[i].inUse) {
+					poolObjects[i].acquire();
+					return poolObjects[i];
+				}
 			}
 		}
 		return null;

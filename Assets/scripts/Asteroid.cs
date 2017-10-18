@@ -14,32 +14,52 @@ public class Asteroid : MonoBehaviour {
 	public float yParticleShutoff = 1.0f;
 	public float yParticleDecayRate = 0.01f;
 	public float difficultyDownForce = 30.0f;
+	public float sideForceRate = 1.5f;
 
 	ParticleSystem particles;
 	bool particlesEnabled = false;
+	float sideForce;
 
 	void Start() {
-		Debug.Log("DIFFICULTY: " + GameManager.instance.getDifficultyLevel());
 		rigidBody = GetComponent<Rigidbody2D>();
-		rigidBody.transform.position = new Vector3((float)Random.Range(-xStartOffset, xStartOffset), yStart, 0f);
-		rigidBody.AddForce(Vector2.right * (float)Random.Range(-xForce, xForce), ForceMode2D.Force);
 
+		// position the asteroid at its starting x position
+		float xStart = Random.Range(-xStartOffset, xStartOffset);
+		rigidBody.transform.position = new Vector3((float)xStart, yStart, 0f);
+
+		// ===========================
+		// TODO: screw all this noise, just pick a target on the ground and Lerp towards it, something like how we Lerp towards the mouse for the Rocket
+		// ===========================
+
+		// try really hard to keep the asteroid in the playing field by adjusting its side force depending on how far to the left or right it starts
+		float percentageOffCenter = -(xStart / xStartOffset);
+		float adjustment = percentageOffCenter * xForce;
+		sideForce = Random.Range((-xForce) + adjustment, xForce + adjustment);
+
+		rigidBody.AddForce(Vector2.right * sideForce);
+
+		// depending on the difficulty level, add (or increase) downward initial force to make the asteroid zip into the field at higher levels
 		int difficulty = GameManager.instance.getDifficultyLevel();
-		if (difficulty > 10) {
-			difficulty = 10;
-		}
 		float downForce = difficultyDownForce * difficulty;
 		rigidBody.AddForce(Vector2.down * downForce);
 
+		// hold onto some particle-related info, we'll be using it in Update to turn off the fireball effect once the asteroids are in the lower atmosphere
 		particles = GetComponentInChildren<ParticleSystem>();
 		particlesEnabled = true;
 	}
 	
 	void Update() {
+
+		// rotate the asteroid towards its direction of movement, mainly to make the particle effects look right
 		if (rigidBody.velocity != Vector2.zero) {
 			float angle = Mathf.Atan2(rigidBody.velocity.y, rigidBody.velocity.x) * Mathf.Rad2Deg;
 			transform.rotation = Quaternion.AngleAxis(angle + 90f, Vector3.forward);
 		}
+
+		// apply the side force
+		//rigidBody.AddForce(Vector2.right * (sideForce * Time.deltaTime * sideForceRate));
+
+		// turn off the fireball effect if we're below a certain altitude
 		if (particlesEnabled) {
 			if (rigidBody.position.y < yParticleShutoff) {
 				particlesEnabled = false;
@@ -47,6 +67,7 @@ public class Asteroid : MonoBehaviour {
 				emission.rateOverTime = Time.deltaTime * yParticleDecayRate;
 			}
 		}
+
 	}
 
 	void OnEnable() {
@@ -69,13 +90,7 @@ public class Asteroid : MonoBehaviour {
 	}
 
 	void OnTriggerEnter2D(Collider2D collider) {
-		if (collider.gameObject.tag == "Ground") {
-			explode();
-			// TODO: hitting the ground should incur a penalty, like burning for awhile and preventing rocket reload?
-		}
-		if (collider.gameObject.tag == "Rocket") {
-			explode();
-		}
+		explode();
 	}
 
 }

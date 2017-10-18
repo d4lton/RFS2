@@ -15,54 +15,27 @@ public class PadsManager : MonoBehaviour {
 	public float yPad = -4.0f;
 	public float xPadOffset = -2.0f;
 
-	int padsLeft = 0;
-	bool gameRunning = false;
+	public static PadsManager instance;
 
-	void Update() {
-		if (gameRunning) {
-			if (Input.GetMouseButtonDown(0)) {
-				// get mouse position in world coordinates, clear out z
-				Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-				mousePosition.z = 0f;
-
-				// find the best pad to launch from, if any
-				Pad bestPad = getBestPadToLaunch(mousePosition);
-				if (bestPad != null) {
-					bestPad.fire(mousePosition);
-				} else {
-					// TODO: ruh roh, no can fire! make blerp sound!
-				}
-
-			}
-		}
+	void Awake() {
+		instance = this;
 	}
 
 	void OnEnable() {
 		GameManager.onGameStarted += onGameStarted;
-		GameManager.onGameRunning += onGameRunning;
-		GameManager.onGameEnded += onGameEnded;
 	}
 
 	void OnDisable() {
 		GameManager.onGameStarted -= onGameStarted;
-		GameManager.onGameRunning -= onGameRunning;
-		GameManager.onGameEnded -= onGameEnded;
 	}
 
 	void onGameStarted() {
 		createPads();
 	}
 
-	void onGameRunning() {
-		gameRunning = true;
-	}
-
-	void onGameEnded() {
-		gameRunning = false;
-	}
-
 	void onPadDestroyed() {
-		padsLeft--;
+		GameObject[] pads = GameObject.FindGameObjectsWithTag("Pad");
+		int padsLeft = pads.Length - 1; // really 1 less, since the one sending the event still counts
 		if (padsLeft <= 0) {
 			if (onPadsDestroyed != null) {
 				onPadsDestroyed();
@@ -93,10 +66,15 @@ public class PadsManager : MonoBehaviour {
 	}
 
 	private void createPad(int i) {
+		GameObject pad = makeNewPad();
+		pad.transform.position = new Vector3(xPadOffset * (i - (padCount / 2)), yPad, 0);
+	}
+
+	private GameObject makeNewPad() {
 		GameObject pad = Instantiate(padPrefab);
 		Pad padScript = pad.GetComponent<Pad>();
 		padScript.onPadDestroyed += onPadDestroyed;
-		pad.transform.position = new Vector3(xPadOffset * (i - (padCount / 2)), yPad, 0);
+		return pad;
 	}
 
 	IEnumerator spawnPads() {
@@ -104,10 +82,26 @@ public class PadsManager : MonoBehaviour {
 			createPad(i);
 			yield return new WaitForSeconds(padCreateInterval);
 		}
-		padsLeft = padCount;
 		if (onPadsCreated != null) {
 			onPadsCreated();
 		}
+	}
+
+	public void launchRocket(Vector3 target) {
+		// find the best pad to launch from, if any
+		Pad bestPad = getBestPadToLaunch(target);
+		if (bestPad != null) {
+			bestPad.fire(target);
+		} else {
+			// TODO: ruh roh, no can fire! make blerp sound!
+		}
+	}
+
+	public void repairPad(GameObject brokenPad) {
+		GameObject pad = makeNewPad();
+		pad.transform.position = brokenPad.transform.position;
+		BrokenPad brokenPadScript = brokenPad.GetComponent<BrokenPad>();
+		brokenPadScript.die();
 	}
 
 }
