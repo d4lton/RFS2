@@ -47,7 +47,6 @@ public class Rocket : StateMachineBehavior {
 			transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.Euler(0, 0, targetAngle), Time.deltaTime * rotationRate);
 			// accelerate towards the target
 			rigidBody.AddForce(rigidBody.transform.up * Time.deltaTime * force);
-			// TODO: check if we've reached the targetPosition (maybe just check height?)
 			break;
 		}
 	}

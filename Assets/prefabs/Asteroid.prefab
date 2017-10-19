@@ -88,7 +88,7 @@ Rigidbody2D:
   m_Mass: 0.5
   m_LinearDrag: 2
   m_AngularDrag: 0
-  m_GravityScale: 0.25
+  m_GravityScale: 0.1
   m_Material: {fileID: 0}
   m_Interpolate: 0
   m_SleepingMode: 1
@@ -122,13 +122,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   explosionPrefab: {fileID: 1088604316920586, guid: 4fa09846e5d3e47ab97c0a56ed8a405b,
     type: 2}
-  yStart: 5.5
-  xStartOffset: 3.5
-  xForce: 100
-  yParticleShutoff: 4
-  yParticleDecayRate: 0.001
-  difficultyDownForce: 50
-  sideForceRate: 1
+  yStart: 7
+  yEnd: -5
+  xStartOffset: 3
+  yParticleShutoff: 3
+  yParticleDecayRate: 0.01
+  difficultyDownForce: 15
+  downForce: 30
 --- !u!198 &198442371873579510
 ParticleSystem:
   m_ObjectHideFlags: 1
