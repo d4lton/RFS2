@@ -270,13 +270,13 @@ public class GameManager : StateMachineBehavior {
 		return difficultyLevel;
 	}
 
-	public void playClip(string name) {
+	public void playClip(string name, float volume = 1.0f) {
 		switch (name) {
 		case "explosion":
-			source.PlayOneShot(explosionClip);
+			source.PlayOneShot(explosionClip, volume);
 			break;
 		case "pad":
-			source.PlayOneShot(padCrushedClip);
+			source.PlayOneShot(padCrushedClip, volume);
 			break;
 		default:
 			Debug.Log("UNKNOWN SOUND NAME: " + name);

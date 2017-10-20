@@ -11,7 +11,7 @@ public class Explosion : MonoBehaviour {
 
 	void Start() {
 		StartCoroutine("awaitDeath");
-		GameManager.instance.playClip("explosion");
+		GameManager.instance.playClip("explosion", Random.Range(0.4f, 0.8f));
 	}
 
 	void OnTriggerEnter2D(Collider2D collider) {

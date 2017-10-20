@@ -72,12 +72,9 @@ public class Asteroid : MonoBehaviour {
 
 		// find a target on the ground
 		if (Random.Range(0, difficultyLevel) == 0) {
-			Debug.Log("TARGETING RANDOMLY");
 			targetRandomly();
 		} else {
-			Debug.Log("TARGETING SPECIFICALLY");
 			if (!targetSpecifically()) {
-				Debug.Log("TARGETING RANDOMLY BECAUSE SPECIFIC TARGETING FAILED");
 				targetRandomly();
 			}
 		}
