@@ -127,8 +127,8 @@ MonoBehaviour:
   xStartOffset: 3
   yParticleShutoff: 3
   yParticleDecayRate: 0.01
-  difficultyDownForce: 15
-  downForce: 30
+  difficultyDownForce: 20
+  downForce: 50
 --- !u!198 &198442371873579510
 ParticleSystem:
   m_ObjectHideFlags: 1
